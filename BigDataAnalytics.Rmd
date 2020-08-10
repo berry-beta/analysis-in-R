@@ -6,20 +6,8 @@ df <- read.table("top250-00-19.csv",header = TRUE,sep = ",")
 
 ```
 
-```{r}
-a <- c("Attacking Midfield","Central Midfield")
-df2 <- df
-
-df2<- df2 %>% mutate(Position = replace(Position,Position == "Central Midfield" a,"Central"))
-df2
-```
-```{r}
 
 
-```
-```{r}
-df2 <- df2 %>% mutate(Position = ifelse(Position %in% Central, "Central",ifelse(Position %in% Defense,"Defense",ifelse(Position %in% Left,"Left",ifelse(Position %in% Right, "Right", ifelse(Position %in% Hybrides,"Hybrides","Hybrides"))))))
-```
 
 ```{r}
 
@@ -57,9 +45,8 @@ ggsave("Average age of transfert by pos.png",width = 14, height = 5)
 
 count(df2, Position) %>% ggplot(aes(Position,n)) + geom_count() + theme_light() + scale_shape()
 ```
-```{r}
-ggsave("", width = 14, height = 5)
-```
+
+
 
 ```{r}
 df %>% group_by(Team_from) %>% count(sort= TRUE) 
