@@ -1,0 +1,97 @@
+```{r}
+library(dplyr)
+library(ggplot2)
+library(hexbin)
+df <- read.table("top250-00-19.csv",header = TRUE,sep = ",")
+
+```
+
+```{r}
+a <- c("Attacking Midfield","Central Midfield")
+df2 <- df
+
+df2<- df2 %>% mutate(Position = replace(Position,Position == "Central Midfield" a,"Central"))
+df2
+```
+```{r}
+
+
+```
+```{r}
+df2 <- df2 %>% mutate(Position = ifelse(Position %in% Central, "Central",ifelse(Position %in% Defense,"Defense",ifelse(Position %in% Left,"Left",ifelse(Position %in% Right, "Right", ifelse(Position %in% Hybrides,"Hybrides","Hybrides"))))))
+```
+
+```{r}
+
+df2<-df
+
+Midfield <-  c("Attacking Midfield","Central Midfield","Right Midfield","Left Midfield","Defensive Midfield", "Midfielder" ) 
+Defense <- c("Defender","Left-Back","GoalKeeper", "Right-Back", "Sweeper","Centre-Back")
+Attack <- c("Forward", "Left Winger", "Right Winger", "Second Striker","Centre-Forward")
+
+df2 <- df2 %>% mutate (Position = ifelse(Position %in% Midfield,"Midfield",ifelse(Position %in% Defense,"Defense",ifelse(Position %in% Attack,"Attack","Attack"))))
+
+
+df2 %>% group_by(Position) %>% count()
+
+```
+
+
+```{r}
+head(df)
+```
+```{r}
+df %>% group_by(League_from) %>% count()
+```
+
+
+```{r}
+test <- df2 %>% group_by(Position) %>% summarize(average=mean(Age))  
+test %>% ggplot(aes(average,Position,size=10)) + geom_point() + labs(x="Average age of transfer") + theme_light() + geom_text(aes(label=round(average,digits = 2)),nudge_x=0.01, nudge_y = 0)
+```
+```{r}
+ggsave("Average age of transfert by pos.png",width = 14, height = 5)
+```
+
+```{r}
+
+count(df2, Position) %>% ggplot(aes(Position,n)) + geom_count() + theme_light() + scale_shape()
+```
+```{r}
+ggsave("", width = 14, height = 5)
+```
+
+```{r}
+df %>% group_by(Team_from) %>% count(sort= TRUE) 
+```
+```{r}
+df2 %>% group_by(Season,Position) %>% count() %>% ggplot(aes(Season,n, col=Position,size=5)) + geom_point() + theme_light() + labs(x="Number of transfert by position for each season",y="Number")
+
+ 
+```
+```{r}
+ggsave("transferbypost.png", width = 14, height = 7)
+```
+
+
+```{r}
+df2 %>% group_by(Age) %>% count() %>% filter(n > 10) %>% ggplot(aes(Age,n)) + geom_col( fill="#04234d") + labs(x="Age when transfered", y="number of transert") + theme_light() + geom_text(aes(label=n, y=(n+20)))
+
+```
+```{r}
+ggsave("ageWhenTransfered.png")
+```
+```{r}
+df2 %>% group_by(Season,Position) %>% summarize(avg = mean(Transfer_fee)/10000) %>% ggplot(aes(Season,avg, col=Position, size=15)) + geom_point() + theme_light() + labs(x="Average transfer fee per season and position",y= "Transfer fee") 
+```
+```{r}
+ggsave("tranfertfee.png", width = 14, height = 7)
+```
+```{r}
+  df2 %>% group_by(Age,Position) %>% filter(Age > 0) %>% summarize(avg = mean(Transfer_fee)/10000) %>% ggplot(aes(Age,avg, col=Position)) + geom_line() + theme_light() + labs("Average transfert value by position per season", "Transfer fee")
+```
+
+```{r}
+df2 %>% filter(Season %in% c("2000-2001","2017-2018")) %>% group_by(Position,Age)%>% ggplot(aes(Position, Age)) + geom_point() + facet_grid(Season~ .)
+```
+
